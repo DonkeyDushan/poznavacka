@@ -14,6 +14,16 @@
   background: var(--color-photo-backdrop);
 }
 
+/* Absolutely positioned so the frame's aspect ratio, not the photo, sets the height. */
+.zoomButton {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
 .image {
   width: 100%;
   height: 100%;
@@ -53,6 +63,7 @@
 
 .counter {
   position: absolute;
+  pointer-events: none;
   bottom: 0.5rem;
   right: 0.5rem;
   padding: 0.125rem 0.5rem;

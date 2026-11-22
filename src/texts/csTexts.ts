@@ -56,6 +56,8 @@ export const TEXTS = Object.freeze({
     count: (index: number, total: number) => `${index} / ${total}`,
     previous: 'Předchozí fotka',
     next: 'Další fotka',
+    zoom: 'Zvětšit fotku',
+    close: 'Zavřít',
   },
   quiz: {
     setupTitle: 'Kvíz',

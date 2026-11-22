@@ -1,0 +1,81 @@
+.lightbox {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--color-lightbox-backdrop);
+  color: var(--color-on-photo);
+  cursor: zoom-out;
+}
+
+.lightbox::backdrop {
+  background: var(--color-lightbox-backdrop);
+}
+
+.image {
+  position: absolute;
+  inset: 0 0 2.5rem;
+  width: 100%;
+  height: calc(100% - 2.5rem);
+  object-fit: contain;
+}
+
+.close,
+.arrow {
+  position: absolute;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 55%);
+  color: var(--color-on-photo);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.close {
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  font-size: 1.75rem;
+}
+
+.arrow {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3rem;
+  height: 3rem;
+  font-size: 2rem;
+}
+
+.arrow[data-side='left'] {
+  left: 0.75rem;
+}
+
+.arrow[data-side='right'] {
+  right: 0.75rem;
+}
+
+.close:hover,
+.arrow:hover {
+  background: rgb(0 0 0 / 75%);
+}
+
+.caption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  padding: 0.625rem 1rem;
+  font-size: 0.8125rem;
+  text-align: center;
+  overflow-wrap: anywhere;
+  cursor: default;
+}
+
+.caption a {
+  color: inherit;
+}
