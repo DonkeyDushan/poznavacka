@@ -6,6 +6,9 @@ USER_AGENT = "PoznavackaBuilder/0.1 (one-off educational dataset build; low requ
 MAX_IMAGES = 5
 THUMB_WIDTH = 960
 SKIP_FILE = re.compile(r"(map|mapa|range|distribution|areal|areál|verbreitung|karte|logo|icon|flag|wappen|coat|stamp|známka|herbarium|skeleton|skull|lebka|diagram|scheme|illustration|drawing|plate|tafel|ilustrace|kresba|sound|\.svg|\.png|\.gif|\.tif|\.webm|\.ogg|\.pdf)", re.I)
+# Nests, eggs, bones and traces show the animal's signs, not the animal; the quiz needs the organism itself.
+SKIP_SIGNS = re.compile(r"\b(nests?|nid|eggs?|eggshells?|fossils?|silurian|eie?r?|gelege|oeufs?|œufs?|clutch|skulls?|skeletons?|bones?|feathers?|footprints?|tracks?|droppings?|pellets?|gewölle|carcass\w*|dead(?! ?man)|road ?kill|hnízd\w*|vejce|vajíč\w*|lebk[ay]|kostr[ay]|pírk\w*|stop[ay]|trus|vývrž\w*|mrtv\w*|schädel)\b", re.I)
+SKIP_CATEGORY = re.compile(r"fossil|maps|distribution|herbarium|illustrations|drawings|nests|eggs|skulls|skeletons|bones|feathers|footprints|tracks|droppings|pellets|carcasses|dead ", re.I)
 CACHE_FILE = "wiki_cache.json"
 
 try:
@@ -159,41 +162,59 @@ for item in items:
         candidates += entry["images"]
     seen, files = set(), []
     for file in candidates:
-        if file in seen or SKIP_FILE.search(file):
+        if file in seen or SKIP_FILE.search(file) or SKIP_SIGNS.search(file):
             continue
         seen.add(file)
         files.append(file)
     item["wiki"]["files"] = files[:MAX_IMAGES * 2]
 
 # 4) Image info (thumb + attribution) from Commons
-all_files = sorted({f for item in items for f in item["wiki"]["files"]})
-info = {}
-for batch in chunks(all_files, 50):
-    result = get_json("https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode({
-        "action": "query", "titles": "|".join("File:" + f for f in batch), "prop": "imageinfo",
+def photo_from_imageinfo(page):
+    """Photo dict for a Commons page, or None when it is not a usable photo of the organism."""
+    if page.get("missing") or not page.get("imageinfo"):
+        return None
+    ii = page["imageinfo"][0]
+    meta = ii.get("extmetadata", {})
+    categories = meta.get("Categories", {}).get("value", "")
+    if ii.get("mime") not in ("image/jpeg", "image/webp") or ii.get("width", 0) < 300:
+        return None
+    if SKIP_FILE.search(page["title"]) or SKIP_SIGNS.search(page["title"]) or SKIP_CATEGORY.search(categories):
+        return None
+    artist = re.sub(r"<[^>]+>", "", html.unescape(meta.get("Artist", {}).get("value", ""))).strip()
+    return {
+        "src": ii.get("thumburl") or ii["url"],
+        "page": ii["descriptionurl"],
+        "author": artist[:120] or "neznámý autor",
+        "license": meta.get("LicenseShortName", {}).get("value", ""),
+    }
+
+
+def imageinfo_query(titles):
+    return "https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode({
+        "action": "query", "titles": "|".join("File:" + f for f in titles), "prop": "imageinfo",
         "iiprop": "url|extmetadata|size|mime", "iiurlwidth": THUMB_WIDTH, "format": "json", "formatversion": "2",
         "iiextmetadatafilter": "Artist|LicenseShortName|LicenseUrl|Categories",
-    }))
+    })
+
+
+# Reuse every file already answered in the cache, whatever batch it came in.
+info, known = {}, set()
+for url, result in cache.items():
+    if not url.startswith("https://commons.wikimedia.org/") or "prop=imageinfo" not in url or "generator=search" in url:
+        continue
     for page in result.get("query", {}).get("pages", []):
-        if page.get("missing") or not page.get("imageinfo"):
-            continue
-        ii = page["imageinfo"][0]
-        if ii.get("mime") not in ("image/jpeg", "image/webp"):
-            continue
-        if ii.get("width", 0) < 300:
-            continue
-        meta = ii.get("extmetadata", {})
-        artist = re.sub(r"<[^>]+>", "", html.unescape(meta.get("Artist", {}).get("value", ""))).strip()
-        categories = meta.get("Categories", {}).get("value", "")
-        if re.search(r"maps|distribution|herbarium|illustrations|drawings", categories, re.I):
-            continue
-        info[page["title"][5:]] = {
-            "src": ii.get("thumburl") or ii["url"],
-            "page": ii["descriptionurl"],
-            "author": artist[:120] or "neznámý autor",
-            "license": meta.get("LicenseShortName", {}).get("value", ""),
-        }
-    time.sleep(0.3)
+        title = page["title"][5:]
+        known.add(title)
+        photo = photo_from_imageinfo(page)
+        if photo:
+            info[title] = photo
+
+missing_files = sorted({f for item in items for f in item["wiki"]["files"]} - known)
+for batch in chunks(missing_files, 50):
+    for page in get_json(imageinfo_query(batch)).get("query", {}).get("pages", []):
+        photo = photo_from_imageinfo(page)
+        if photo:
+            info[page["title"][5:]] = photo
 
 for item in items:
     item["images"] = [info[f] for f in item["wiki"]["files"] if f in info][:MAX_IMAGES]
@@ -203,17 +224,10 @@ def commons_search(name):
     result = get_json("https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode({
         "action": "query", "generator": "search", "gsrsearch": f'"{name}" filetype:bitmap', "gsrnamespace": 6,
         "gsrlimit": MAX_IMAGES * 2, "prop": "imageinfo", "iiprop": "url|extmetadata|mime|size", "iiurlwidth": THUMB_WIDTH,
-        "iiextmetadatafilter": "Artist|LicenseShortName", "format": "json", "formatversion": "2"}))
-    photos = []
-    for page in sorted(result.get("query", {}).get("pages", []), key=lambda p: p.get("index", 0)):
-        ii = (page.get("imageinfo") or [{}])[0]
-        if SKIP_FILE.search(page["title"]) or ii.get("mime") != "image/jpeg" or ii.get("width", 0) < 300:
-            continue
-        meta = ii.get("extmetadata", {})
-        artist = re.sub(r"<[^>]+>", "", html.unescape(meta.get("Artist", {}).get("value", ""))).strip()
-        photos.append({"src": ii.get("thumburl") or ii["url"], "page": ii["descriptionurl"],
-                       "author": artist[:120] or "neznámý autor", "license": meta.get("LicenseShortName", {}).get("value", "")})
-    return photos[:MAX_IMAGES]
+        "iiextmetadatafilter": "Artist|LicenseShortName|Categories", "format": "json", "formatversion": "2"}))
+    pages = sorted(result.get("query", {}).get("pages", []), key=lambda p: p.get("index", 0))
+    photos = [photo_from_imageinfo(page) for page in pages]
+    return [photo for photo in photos if photo][:MAX_IMAGES]
 
 
 for item in items:
