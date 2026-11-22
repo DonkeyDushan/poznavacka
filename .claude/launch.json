@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "poznavacka",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "source ~/.nvm/nvm.sh && nvm use 22 >/dev/null && npm run dev -- --port \"${PORT:-5180}\""
+      ],
+      "port": 5180,
+      "autoPort": true
+    }
+  ]
+}

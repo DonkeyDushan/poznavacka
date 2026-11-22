@@ -1,0 +1,8 @@
+node_modules
+dist
+*.local
+.DS_Store
+scripts/.venv
+scripts/source
+scripts/wiki_cache.json
+__pycache__

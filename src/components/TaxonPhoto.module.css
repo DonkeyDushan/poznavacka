@@ -1,0 +1,74 @@
+.figure {
+  margin: 0;
+}
+
+.frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  max-height: 52vh;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--color-photo-backdrop);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.missing {
+  color: var(--color-text-muted);
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 45%);
+  color: var(--color-on-photo);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.arrow[data-side='left'] {
+  left: 0.5rem;
+}
+
+.arrow[data-side='right'] {
+  right: 0.5rem;
+}
+
+.arrow:hover {
+  background: rgb(0 0 0 / 65%);
+}
+
+.counter {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 55%);
+  color: var(--color-on-photo);
+  font-size: 0.75rem;
+}
+
+.credit {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.credit a {
+  color: inherit;
+}

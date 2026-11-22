@@ -1,0 +1,64 @@
+.answer {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.names {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.625rem;
+}
+
+.czechName {
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+
+.latinName {
+  font-style: italic;
+  font-size: 1.0625rem;
+  color: var(--color-text-muted);
+}
+
+.rank,
+.badge {
+  padding: 0.0625rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: var(--color-surface-strong);
+  color: var(--color-text-muted);
+}
+
+.badge {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.note {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.details {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.125rem 0.75rem;
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.details dt {
+  color: var(--color-text-muted);
+}
+
+.details dd {
+  margin: 0;
+}
+
+.wikipedia {
+  justify-self: start;
+  font-size: 0.9375rem;
+  color: var(--color-accent-text);
+}
