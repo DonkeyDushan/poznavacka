@@ -49,6 +49,8 @@ export const TEXTS = Object.freeze({
     section: 'Zařazení',
     wikipedia: 'Wikipedie',
     noPhoto: 'Bez fotky',
+    sound: 'Hlas',
+    soundCredit: 'Nahrávka',
   },
   photo: {
     credit: 'Foto',
@@ -120,7 +122,7 @@ export const TEXTS = Object.freeze({
   },
   footer: {
     source:
-      'Seznam: P. Bogusch, J. Jehlička, F. Kolář, J. Matějů – Seznam přírodnin pro poznávačku, kategorie A, B (Biologická olympiáda, 2013). Fotky: Wikimedia Commons, autoři a licence u každé fotky.',
+      'Seznam: P. Bogusch, J. Jehlička, F. Kolář, J. Matějů – Seznam přírodnin pro poznávačku, kategorie A, B (Biologická olympiáda, 2013). Fotky a nahrávky: Wikimedia Commons, autoři a licence u každého souboru.',
     progressNote: 'Postup se ukládá jen v tomto prohlížeči.',
   },
 })

@@ -1,6 +1,7 @@
 import type { Taxon } from '../data/taxon'
 import { TEXTS } from '../texts/csTexts'
 import styles from './TaxonAnswer.module.css'
+import { TaxonSounds } from './TaxonSounds'
 
 type TaxonAnswerProps = {
   taxon: Taxon
@@ -53,6 +54,9 @@ export const TaxonAnswer = ({ taxon, testId }: TaxonAnswerProps) => {
           </>
         )}
       </dl>
+      {taxon.sounds.length > 0 && (
+        <TaxonSounds sounds={taxon.sounds} testId={`${testId}--sounds`} />
+      )}
       {taxon.wikipediaUrl && (
         <a
           className={styles.wikipedia}

@@ -1,57 +1,18 @@
 """Attach Wikimedia Commons photos (with attribution) to quiz items."""
-import json, re, sys, time, urllib.error, urllib.parse, urllib.request, html
+import json
+import re
+import sys
+import urllib.parse
+
+from wiki_client import cache, chunks, get_json, plain_author, save_cache, wiki_api
 
 ITEMS, OUT = sys.argv[1], sys.argv[2]
-USER_AGENT = "PoznavackaBuilder/0.1 (one-off educational dataset build; low request rate) python-urllib"
 MAX_IMAGES = 5
 THUMB_WIDTH = 960
 SKIP_FILE = re.compile(r"(map|mapa|range|distribution|areal|areál|verbreitung|karte|logo|icon|flag|wappen|coat|stamp|známka|herbarium|skeleton|skull|lebka|diagram|scheme|illustration|drawing|plate|tafel|ilustrace|kresba|sound|\.svg|\.png|\.gif|\.tif|\.webm|\.ogg|\.pdf)", re.I)
 # Nests, eggs, bones and traces show the animal's signs, not the animal; the quiz needs the organism itself.
 SKIP_SIGNS = re.compile(r"\b(nests?|nid|eggs?|eggshells?|fossils?|silurian|eie?r?|gelege|oeufs?|œufs?|clutch|skulls?|skeletons?|bones?|feathers?|footprints?|tracks?|droppings?|pellets?|gewölle|carcass\w*|dead(?! ?man)|road ?kill|hnízd\w*|vejce|vajíč\w*|lebk[ay]|kostr[ay]|pírk\w*|stop[ay]|trus|vývrž\w*|mrtv\w*|schädel)\b", re.I)
 SKIP_CATEGORY = re.compile(r"fossil|maps|distribution|herbarium|illustrations|drawings|nests|eggs|skulls|skeletons|bones|feathers|footprints|tracks|droppings|pellets|carcasses|dead ", re.I)
-CACHE_FILE = "wiki_cache.json"
-
-try:
-    cache = json.load(open(CACHE_FILE))
-except FileNotFoundError:
-    cache = {}
-
-
-def get_json(url, data=None):
-    if data is None and url in cache:
-        return cache[url]
-    for attempt in range(8):
-        try:
-            time.sleep(1.2)
-            request = urllib.request.Request(url, data=data, headers={"User-Agent": USER_AGENT, "Accept": "application/json", "Accept-Encoding": "identity"})
-            with urllib.request.urlopen(request, timeout=60) as response:
-                result = json.load(response)
-            if data is None:
-                cache[url] = result
-                if len(cache) % 20 == 0:
-                    json.dump(cache, open(CACHE_FILE, "w"))
-            return result
-        except urllib.error.HTTPError as error:
-            wait = int(error.headers.get("Retry-After") or 0) or 20 * (attempt + 1)
-            print("retry", attempt, error.code, "wait", wait, url[:80], file=sys.stderr)
-            time.sleep(wait)
-        except Exception as error:  # noqa: BLE001
-            print("retry", attempt, error, url[:80], file=sys.stderr)
-            time.sleep(5 * (attempt + 1))
-    json.dump(cache, open(CACHE_FILE, "w"))
-    raise RuntimeError(url)
-
-
-def wiki_api(lang, params):
-    params = {**params, "format": "json", "formatversion": "2"}
-    return get_json(f"https://{lang}.wikipedia.org/w/api.php?" + urllib.parse.urlencode(params))
-
-
-def chunks(seq, size):
-    for index in range(0, len(seq), size):
-        yield seq[index:index + size]
-
-
 items = json.load(open(ITEMS))
 
 # 1) Resolve Wikipedia articles by Latin name (redirects resolve), then Czech name
@@ -180,11 +141,10 @@ def photo_from_imageinfo(page):
         return None
     if SKIP_FILE.search(page["title"]) or SKIP_SIGNS.search(page["title"]) or SKIP_CATEGORY.search(categories):
         return None
-    artist = re.sub(r"<[^>]+>", "", html.unescape(meta.get("Artist", {}).get("value", ""))).strip()
     return {
         "src": ii.get("thumburl") or ii["url"],
         "page": ii["descriptionurl"],
-        "author": artist[:120] or "neznámý autor",
+        "author": plain_author(meta),
         "license": meta.get("LicenseShortName", {}).get("value", ""),
     }
 
@@ -234,7 +194,7 @@ for item in items:
     if not item["images"] and item["lat"]:
         item["images"] = commons_search(item["lat"])
 
-json.dump(cache, open(CACHE_FILE, "w"))
+save_cache()
 json.dump(items, open(OUT, "w"), ensure_ascii=False, indent=1)
 without = [i for i in items if not i["images"]]
 print("items", len(items), "without images", len(without), file=sys.stderr)

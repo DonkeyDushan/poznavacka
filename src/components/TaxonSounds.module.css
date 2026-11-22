@@ -1,0 +1,31 @@
+.sounds {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.label {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.sound {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+}
+
+.player {
+  width: 100%;
+  max-width: 28rem;
+  height: 2.5rem;
+}
+
+.credit {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.credit a {
+  color: inherit;
+}

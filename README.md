@@ -34,7 +34,8 @@ Push do `main` spustí GitHub Action, která stránku sestaví a nasadí na GitH
    poznámky („larva, imago“), zavlečené druhy a zařazení do skupin.
 3. `fetch_images.py` najde články na české a anglické Wikipedii a Wikidatech a vybere až pět fotek
    z Wikimedia Commons i s autorem a licencí. Fotky se načítají přímo z Commons.
-4. `export_site_data.py` zapíše JSON pro stránku.
+4. `fetch_sounds.py` přidá k ptákům až dvě nahrávky hlasu z Commons (MP3, aby hrály i v Safari).
+5. `export_site_data.py` zapíše JSON pro stránku.
 
 ```bash
 cd scripts
@@ -43,14 +44,15 @@ mkdir -p source  # sem PDF se seznamem jako source/seznam.pdf
 .venv/bin/python parse_pdf.py source/seznam.pdf source/events.json
 .venv/bin/python build_items.py source/events.json source/items.json
 .venv/bin/python fetch_images.py source/items.json source/items_with_photos.json
-.venv/bin/python export_site_data.py source/items_with_photos.json ../public/data/taxa.json
+.venv/bin/python fetch_sounds.py source/items_with_photos.json source/items_with_media.json
+.venv/bin/python export_site_data.py source/items_with_media.json ../public/data/taxa.json
 ```
 
-`fetch_images.py` si odpovědi API ukládá do `wiki_cache.json`, takže opakované spuštění je rychlé.
+Skripty si odpovědi API ukládají do `wiki_cache.json`, takže opakované spuštění je rychlé.
 
 ## Zdroje
 
 - Seznam: P. Bogusch, J. Jehlička, F. Kolář, J. Matějů – _Seznam přírodnin pro poznávačku, kategorie A, B_,
   Biologická olympiáda, ČZU v Praze, 2013. Neživá příroda (horniny) není zahrnutá.
-- Fotky: [Wikimedia Commons](https://commons.wikimedia.org/), autor a licence jsou u každé fotky
-  a odkazují na stránku souboru.
+- Fotky a nahrávky: [Wikimedia Commons](https://commons.wikimedia.org/) (nahrávky ptáků často
+  z xeno-canto), autor a licence jsou u každého souboru a odkazují na jeho stránku.

@@ -64,6 +64,7 @@ for item in items:
         "higherTaxon": {"rank": family["rank"], "czechName": family["cz"], "latinName": family["lat"]} if family and family["cz"] else None,
         "genus": {"czechNames": genus["cz_all"], "latinNames": genus["lat_all"]} if genus else None,
         "photos": item.get("images", []),
+        "sounds": item.get("sounds", []),
         "wikipediaUrl": wikipedia_url(item.get("wiki", {})),
     })
 
