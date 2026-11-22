@@ -49,6 +49,7 @@ export const App = () => {
       <footer className={styles.footer}>
         <p>{TEXTS.footer.source}</p>
         <p>{TEXTS.footer.progressNote}</p>
+        <p>{TEXTS.footer.edibilityNote}</p>
       </footer>
     </div>
   )

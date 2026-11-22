@@ -1,0 +1,32 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.0625rem 0.5rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  justify-self: start;
+}
+
+.badge[data-edibility='edible'] {
+  color: var(--color-success);
+  background: var(--color-success-soft);
+}
+
+.badge[data-edibility='inedible'] {
+  color: var(--color-text-muted);
+  background: var(--color-surface-strong);
+}
+
+.badge[data-edibility='poisonous'],
+.badge[data-edibility='mixed'] {
+  color: var(--color-warning);
+  background: var(--color-warning-soft);
+}
+
+.badge[data-edibility='deadly'] {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+}

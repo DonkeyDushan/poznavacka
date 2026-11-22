@@ -34,6 +34,8 @@ Push do `main` spustí GitHub Action, která stránku sestaví a nasadí na GitH
    poznámky („larva, imago“), zavlečené druhy a zařazení do skupin.
 3. `fetch_images.py` najde články na české a anglické Wikipedii a Wikidatech a vybere až pět fotek
    z Wikimedia Commons i s autorem a licencí. Fotky se načítají přímo z Commons.
+   Jedlost hub (jedlá / nejedlá / jedovatá / smrtelně jedovatá / jedlé i jedovaté druhy) je ručně
+   v `fungi_edibility.json` podle českých atlasů – Wikidata ji mají jen zčásti a nespolehlivě.
 4. `fetch_sounds.py` přidá k ptákům až dvě nahrávky hlasu z Commons (MP3, aby hrály i v Safari).
 5. `export_site_data.py` zapíše JSON pro stránku.
 

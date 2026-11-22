@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { EdibilityBadge } from '../components/EdibilityBadge'
 import { toThumbnailUrl } from '../data/photoThumbnail'
 import type { Taxon } from '../data/taxon'
 import { LEARNED_BOX, useProgress } from '../progress/progressStore'
@@ -38,6 +39,12 @@ export const TaxonCard = ({ taxon, onOpen }: TaxonCardProps) => {
           <span className={styles.cardCzech}>{taxon.czechName}</span>
           <i className={styles.cardLatin}>{taxon.latinName}</i>
           <span className={styles.cardRank}>{TEXTS.rankName[taxon.rank]}</span>
+          {taxon.edibility && (
+            <EdibilityBadge
+              edibility={taxon.edibility}
+              testId={`atlas-card--${taxon.id}--edibility`}
+            />
+          )}
         </span>
       </button>
     </li>

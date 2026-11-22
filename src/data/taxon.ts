@@ -1,5 +1,8 @@
 export type Rank = 'species' | 'genus' | 'family' | 'order' | 'class' | 'phylum' | 'group'
 
+/** 'mixed' marks a genus with both edible and poisonous species. */
+export type Edibility = 'edible' | 'inedible' | 'poisonous' | 'deadly' | 'mixed'
+
 export type GroupId =
   | 'protists'
   | 'algae'
@@ -46,6 +49,8 @@ export type Taxon = {
   photos: TaxonPhoto[]
   /** Bird song recordings (MP3); empty for other groups. */
   sounds: CommonsMedia[]
+  /** Only for macrofungi. */
+  edibility: Edibility | null
   wikipediaUrl: string | null
 }
 

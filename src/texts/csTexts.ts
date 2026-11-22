@@ -1,4 +1,4 @@
-import type { Rank } from '../data/taxon'
+import type { Edibility, Rank } from '../data/taxon'
 
 const formatPoints = (points: number) =>
   points.toLocaleString('cs-CZ', { maximumFractionDigits: 1 })
@@ -43,6 +43,13 @@ export const TEXTS = Object.freeze({
     phylum: 'Kmen',
     group: 'Skupina',
   } satisfies Record<Rank, string>,
+  edibility: {
+    edible: { symbol: '✓', label: 'jedlá' },
+    inedible: { symbol: '✕', label: 'nejedlá' },
+    poisonous: { symbol: '☠', label: 'jedovatá' },
+    deadly: { symbol: '☠☠', label: 'smrtelně jedovatá' },
+    mixed: { symbol: '±', label: 'jedlé i jedovaté druhy' },
+  } satisfies Record<Edibility, { symbol: string; label: string }>,
   taxon: {
     introduced: 'zavlečený',
     synonyms: 'Také',
@@ -124,5 +131,6 @@ export const TEXTS = Object.freeze({
     source:
       'Seznam: P. Bogusch, J. Jehlička, F. Kolář, J. Matějů – Seznam přírodnin pro poznávačku, kategorie A, B (Biologická olympiáda, 2013). Fotky a nahrávky: Wikimedia Commons, autoři a licence u každého souboru.',
     progressNote: 'Postup se ukládá jen v tomto prohlížeči.',
+    edibilityNote: 'Jedlost hub je jen orientační – podle této stránky houby nesbírej.',
   },
 })

@@ -1,5 +1,6 @@
 import type { Taxon } from '../data/taxon'
 import { TEXTS } from '../texts/csTexts'
+import { EdibilityBadge } from './EdibilityBadge'
 import styles from './TaxonAnswer.module.css'
 import { TaxonSounds } from './TaxonSounds'
 
@@ -21,6 +22,9 @@ export const TaxonAnswer = ({ taxon, testId }: TaxonAnswerProps) => {
         {taxon.latinName && <span className={styles.latinName}>{taxon.latinName}</span>}
         <span className={styles.rank}>{TEXTS.rankName[taxon.rank]}</span>
         {taxon.isIntroduced && <span className={styles.badge}>{TEXTS.taxon.introduced}</span>}
+        {taxon.edibility && (
+          <EdibilityBadge edibility={taxon.edibility} testId={`${testId}--edibility`} />
+        )}
       </div>
       {taxon.note && <p className={styles.note}>{taxon.note}</p>}
       <dl className={styles.details}>

@@ -3,6 +3,7 @@ import json
 import re
 import sys
 import urllib.parse
+from pathlib import Path
 
 ITEMS, OUT = sys.argv[1], sys.argv[2]
 
@@ -44,7 +45,13 @@ def wikipedia_url(wiki):
     return None
 
 
+# Hand-curated from Czech mushroom atlases: Wikidata's edibility (P789) is sparse and contradictory.
+EDIBILITY = json.load(open(Path(__file__).with_name("fungi_edibility.json")))
+
 items = json.load(open(ITEMS))
+unknown_ids = set(EDIBILITY) - {item["id"] for item in items}
+if unknown_ids:
+    raise SystemExit(f"fungi_edibility.json names unknown taxa: {sorted(unknown_ids)}")
 taxa = []
 for item in items:
     family = item.get("family")
@@ -65,6 +72,7 @@ for item in items:
         "genus": {"czechNames": genus["cz_all"], "latinNames": genus["lat_all"]} if genus else None,
         "photos": item.get("images", []),
         "sounds": item.get("sounds", []),
+        "edibility": EDIBILITY.get(item["id"]),
         "wikipediaUrl": wikipedia_url(item.get("wiki", {})),
     })
 
