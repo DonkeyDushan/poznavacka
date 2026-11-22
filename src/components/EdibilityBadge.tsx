@@ -7,12 +7,20 @@ type EdibilityBadgeProps = {
   testId: string
 }
 
+/** Coloured symbol only; the word stays in the tooltip and for screen readers. */
 export const EdibilityBadge = ({ edibility, testId }: EdibilityBadgeProps) => {
   const { symbol, label } = TEXTS.edibility[edibility]
 
   return (
-    <span className={styles.badge} data-edibility={edibility} title={label} data-testid={testId}>
-      <span aria-hidden="true">{symbol}</span> {label}
+    <span
+      className={styles.badge}
+      data-edibility={edibility}
+      title={label}
+      role="img"
+      aria-label={label}
+      data-testid={testId}
+    >
+      {symbol}
     </span>
   )
 }

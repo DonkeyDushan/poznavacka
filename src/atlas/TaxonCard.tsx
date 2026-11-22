@@ -36,15 +36,16 @@ export const TaxonCard = ({ taxon, onOpen }: TaxonCardProps) => {
           </span>
         )}
         <span className={styles.cardNames}>
-          <span className={styles.cardCzech}>{taxon.czechName}</span>
+          <span className={styles.cardCzech}>
+            {taxon.czechName}{' '}
+            {taxon.edibility && (
+              <EdibilityBadge
+                edibility={taxon.edibility}
+                testId={`atlas-card--${taxon.id}--edibility`}
+              />
+            )}
+          </span>
           <i className={styles.cardLatin}>{taxon.latinName}</i>
-          <span className={styles.cardRank}>{TEXTS.rankName[taxon.rank]}</span>
-          {taxon.edibility && (
-            <EdibilityBadge
-              edibility={taxon.edibility}
-              testId={`atlas-card--${taxon.id}--edibility`}
-            />
-          )}
         </span>
       </button>
     </li>
