@@ -25,15 +25,6 @@ export const TEXTS = Object.freeze({
     phylum: 'Urči kmen',
     group: 'Urči skupinu',
   } satisfies Record<Rank, string>,
-  rankName: {
-    species: 'druh',
-    genus: 'rod',
-    family: 'čeleď',
-    order: 'řád',
-    class: 'třída',
-    phylum: 'kmen',
-    group: 'skupina',
-  } satisfies Record<Rank, string>,
   rankTitle: {
     species: 'Druh',
     genus: 'Rod',

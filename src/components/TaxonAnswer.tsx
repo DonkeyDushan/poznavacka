@@ -20,7 +20,6 @@ export const TaxonAnswer = ({ taxon, testId }: TaxonAnswerProps) => {
       <div className={styles.names}>
         <span className={styles.czechName}>{taxon.czechName}</span>
         {taxon.latinName && <span className={styles.latinName}>{taxon.latinName}</span>}
-        <span className={styles.rank}>{TEXTS.rankName[taxon.rank]}</span>
         {taxon.isIntroduced && <span className={styles.badge}>{TEXTS.taxon.introduced}</span>}
         {taxon.edibility && (
           <EdibilityBadge edibility={taxon.edibility} testId={`${testId}--edibility`} />

@@ -21,16 +21,10 @@
   color: var(--color-text-muted);
 }
 
-.rank,
 .badge {
   padding: 0.0625rem 0.5rem;
   border-radius: 999px;
   font-size: 0.75rem;
-  background: var(--color-surface-strong);
-  color: var(--color-text-muted);
-}
-
-.badge {
   background: var(--color-warning-soft);
   color: var(--color-warning);
 }
